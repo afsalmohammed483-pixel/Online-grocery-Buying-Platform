@@ -1,0 +1,17 @@
+.navbar-brand,.nav-link{
+    display: inline-flex;
+    align-items: center;
+}
+.navbar-brand:hover{
+    color: green !important;
+    transform: translateY(-2px);
+    transition: color 0.3s ease,transform 0.3s ease;
+}
+.nav-link:hover{
+    background-color: greenyellow !important;
+    border-radius: 0.25rem;
+    color : #000;
+    font-weight: bold;
+    transition: background-color 0.3 ease;
+
+}

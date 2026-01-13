@@ -1,0 +1,204 @@
+from django.shortcuts import render
+from django.contrib.auth import authenticate
+from rest_framework.decorators import api_view,parser_classes
+from rest_framework.response import Response
+from .models import *
+
+# Create your views here.
+@api_view(['POST'])
+def admin_login_api(request):
+    username=request.data.get('username')
+    password=request.data.get('password')
+    user = authenticate(username=username,password=password)
+    if user is not None and user.is_staff:
+        return Response({'message': 'Admin login successful',"username":username},status=200)
+    return Response({'message': 'Invalid credentials'},status=401)
+
+@api_view(['POST'])
+def add_category(request):
+    category_name = request.data.get('category_name')
+    Category.objects.create(category_name=category_name)
+    return Response({'message': 'Category Added Succesfully'},status=201)
+
+from .serializers import *
+
+@api_view(['GET'])
+def list_categories(request):
+   categories = Category.objects.all()
+   serializer = CategorySerializer(categories,many=True)
+   return Response(serializer.data)
+
+from rest_framework.parsers import MultiPartParser,FormParser
+from .serializers import ProductSerializer
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser,FormParser])
+def add_product(request):
+    serializer = ProductSerializer(data = request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'Product Added Succesfully'},status=201)
+    return Response({"message":"Validation failed","errors":serializer.errors},status=400)
+@api_view(['GET'])
+def list_foods(request):
+   foods = Item.objects.all()
+   serializer = ProductSerializer(foods,many=True)
+   return Response(serializer.data)
+@api_view(['GET'])
+def food_search(request):
+   query = request.GET.get('q','')
+   foods = Item.objects.filter(Item_name__icontains=query)
+   serializer = ProductSerializer(foods,many=True)
+   return Response(serializer.data)
+import random
+@api_view(['GET'])
+def random_foods(request):
+    foods = list(Item.objects.all())
+    random.shuffle(foods)
+    limited_foods = foods[0:9]
+    serializer = ProductSerializer(limited_foods, many=True)
+    return Response(serializer.data)
+from django.contrib.auth.hashers import make_password
+@api_view(['POST'])
+def register_user(request):
+    first_name = request.data.get('first_name')
+    Last_name = request.data.get('Last_name')
+    MobileNo = request.data.get('MobileNo')
+    Email = request.data.get('Email')
+    Password = request.data.get('Password') 
+    if User.objects.filter(Email=Email).exists() or User.objects.filter(MobileNo=MobileNo).exists():
+        return Response({'message': 'Email and Phone Number Already Registered'},status=400)
+    User.objects.create(first_name= first_name ,Last_name=Last_name,Email=Email,MobileNo=MobileNo,
+                        Password= make_password(Password))
+    return Response({"message":"Regitration Successful"},status=201)
+from django.db.models import Q
+from django.contrib.auth.hashers import check_password
+@api_view(['POST'])
+def login_user(request):
+    identifier = request.data.get('Emailcont')
+    Password = request.data.get('Password')
+    try:
+        user = User.objects.get(Q(Email=identifier) | Q(MobileNo = identifier))
+        if check_password(Password,user.Password):
+          return Response({'message': 'Login Succesful',"userId":user.id,"userName":f'{user.first_name}{user.Last_name}'},status=200)
+        else:
+           return Response({"message":"Invalid Credentials"},status=401)
+    except:
+        return Response({"message":"Invalid Credentials"},status=401)
+from django.shortcuts import get_object_or_404    
+@api_view(['GET'])
+def food_details(request,id):
+    food = get_object_or_404(Item,id=id)
+    serializer = ProductSerializer(food)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def add_to_cart(request):
+    user_id = request.data.get('userId')
+    food_id = request.data.get('foodId')
+    try:
+        user = User.objects.get(id=user_id)
+        food = Item.objects.get(id=food_id)
+        
+        
+        # Ensure we pass the Item instance (not the id) and don't use an invalid
+        # `default` argument. Use `get_or_create` with the correct kwargs.
+        order, created = Order.objects.get_or_create(
+            user=user,
+            food=food,
+            is_order_placed=False,
+        )
+
+        if not created:
+            order.quantity = order.quantity + 1
+            order.save()
+
+        return Response({'message': 'Item Added to Cart Succesfully'}, status=200)
+        
+    except:
+        return Response({"message":"Something went wrong"},status=404)
+from .serializers import CartOrdersSerializer   
+
+@api_view(['GET'])
+def get_cart_items(request,user_id):
+    orders = Order.objects.filter(user_id=user_id,is_order_placed=False).select_related('food')    
+    serializer = CartOrdersSerializer(orders,many=True)
+    return Response(serializer.data)
+@api_view(['PUT'])
+def update_cart_quantity(request):
+    order_id = request.data.get('orderId')
+    quantity = request.data.get('quantity')
+    try:
+        order = Order.objects.get(id=order_id, is_order_placed=False)
+        order.quantity = int(quantity)
+        order.save()
+        return Response({"message": "Quantity updated Successfully", "orderId": order.id, "quantity": order.quantity}, status=200)
+    except Order.DoesNotExist:
+        return Response({"message": "Order not found"}, status=404)
+    except Exception:
+        return Response({"message": "Something went wrong"}, status=400)
+@api_view(['DELETE'])
+def delete_cart_item(request,order_id):
+    
+    try:  
+        order = Order.objects.get(id=order_id , is_order_placed=False)
+        order.delete()
+        return Response({"message":"Item Deleted from the Cart"},status=200)
+    except:
+        return Response({"message":""},status=404)
+    
+    
+def make_unique_order_number():
+    while True:
+        num = str(random.randint(1000000000,9999999999))
+        if not OrderAddress.objects.filter(order_number=num).exists():
+            return num
+    
+@api_view(['POST'])
+def place_order(request):
+    user_id = request.data.get('userId')
+    address = request.data.get('address')
+    payment_mode = request.data.get('paymentMode')
+    card_number = request.data.get('cardNumber')
+    expiry = request.data.get('expiry')
+    cvv = request.data.get('cvv')
+    try:
+        order = Order.objects.filter(user_id=user_id, is_order_placed=False)
+        order_number = make_unique_order_number()
+        order.update(order_number=order_number, is_order_placed=True)
+
+        OrderAddress.objects.create(
+            user_id = user_id,
+            order_number = order_number,
+            address = address
+        )
+
+        PaymentDetails.objects.create(
+            user_id = user_id,
+            order_number = order_number,
+            payment_mode = payment_mode,
+            card_number = card_number if payment_mode == 'online' else None,
+            expiry_date = expiry if payment_mode == 'online' else None,
+            cvv = cvv if payment_mode == 'online' else None,
+
+        )
+      
+
+        return Response({'message': f'Order Placed Successfully! Order No: {order_number}'}, status=201)
+        
+    except:
+        return Response({"message":"Something went wrong"},status=404)
+from .serializers import MyOrdersListSerializer
+@api_view(['GET'])
+def user_orders(request,user_id):
+    orders = OrderAddress.objects.filter(user_id=user_id).order_by('-id')    
+    serializer = MyOrdersListSerializer(orders,many=True)
+    return Response(serializer.data)
+from .serializers import OrderSerializer
+@api_view(['GET'])
+def order_by_order_number(request,order_number):
+    orders = Order.objects.filter(order_number=order_number,is_order_placed=True).select_related('food')
+    serializer = OrderSerializer(orders,many=True)
+    return Response(serializer.data)
+   
+   

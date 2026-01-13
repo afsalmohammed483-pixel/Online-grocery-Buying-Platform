@@ -1,0 +1,37 @@
+.hero{
+    min-height: 700px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+@media(max-width:768px){
+    .hero{
+        min-height: 300px;
+    }
+}
+input::placeholder{
+    font-style: italic;
+}
+
+.hovereffect{
+    display: block;
+    transition: transform 0.3s ease-in-out;
+    will-change: transform, box-shadow;
+    cursor: pointer;
+}
+
+.hovereffect:hover{
+    transform: scale(1.02);
+    box-shadow: 0 7px 15px rgba(0,0,0,0.12);
+}
+
+/* Card hover shadow and prevent overflow when scaling */
+.card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
