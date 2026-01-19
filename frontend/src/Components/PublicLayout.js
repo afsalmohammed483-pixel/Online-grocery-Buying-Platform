@@ -72,8 +72,8 @@ import "../styles/Layout.css";
                                               <FaUserCircle className='me-1'/>  {userName}
                                             </a>
                                             <ul class="dropdown-menu" >
-                                                <li><Link className="dropdown-item" to='#' ><FaUser className='me-1'/>Profile</Link></li>
-                                                <li><Link className="dropdown-item" to='#'><FaCogs className='me-1'/>Settings</Link></li>
+                                                <li><Link className="dropdown-item" to='profile' ><FaUser className='me-1'/>Profile</Link></li>
+                                                <li><Link className="dropdown-item" to='changepassword'><FaCogs className='me-1'/>Settings</Link></li>
                                                 <li><hr className="dropdown-divider"></hr></li>
                                                 <li><button className="dropdown-item" onClick={handleLogout} ><FaSignOutAlt className='me-1'/>Logout</button></li>
                                             </ul>

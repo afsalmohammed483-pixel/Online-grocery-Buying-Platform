@@ -72,23 +72,26 @@ const toggleMenu = (menuName)=>{
 
             <div  className='ps-5'>
             
-                <Link className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
+                <Link  to='/order-not-confirmed' className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
                  Not Confirmed</Link>   
-                 <Link className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
+                 <Link to= '/orders-confirmed' className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
                  Confirmed</Link> 
-                 <Link className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
+                 <Link to='/food_being-prepared' className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
                  Packing</Link>
-                 <Link className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
+                 <Link to='/foodpickup' className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
                  Ready for Delivery</Link>
-                 <Link className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
+                  <Link to='/orders-delivered' className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
+                  Orders Delivered</Link>
+                 <Link to="/order-cancelled" className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
                  Cancelled</Link>
-                 <Link className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
+                 <Link to='/all-foods' className='list-group-item list-group-item-action bg-dark text-white rounded border-0'>
                  All Orders</Link>
+                 
              </div>
             
             )} 
             <div className='list-group list-group-flush mt-3'>
-                <Link className='list-group-item list-group-item-action bg-dark text-white'>
+                <Link to='/order-report' className='list-group-item list-group-item-action bg-dark text-white'>
                 <FaFile className='icon-fix'/> B/w Dates Report </Link>
             </div>
            <div className='list-group list-group-flush mt-3'>
