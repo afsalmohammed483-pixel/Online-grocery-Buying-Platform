@@ -32,5 +32,56 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['food','quantity']
+
+class OrderAddressSerializer(serializers.ModelSerializer):
+    payment_mode = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OrderAddress
+        fields = ['order_number', 'address', 'order_time', 'order_final_status', 'payment_mode',]
+
+    def get_payment_mode(self, obj):
+        try:
+            payment = PaymentDetails.objects.get(order_number=obj.order_number)
+            return payment.payment_mode
+        except PaymentDetails.DoesNotExist:
+            return None
+
       
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','first_name','Last_name','Email','MobileNo','reg_date']
+      
+class OrderSummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderAddress
+        fields = ['id','order_number','order_time'] 
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    user_first_name = serializers.CharField(source="user.first_name")
+    user_last_name = serializers.CharField(source="user.Last_name")
+    user_email = serializers.CharField(source="user.Email")
+    user_mobile = serializers.CharField(source="user.MobileNo")
+    class Meta:
+        model = OrderAddress
+        fields = ['order_number','order_time','order_final_status','address','user_first_name',
+                  'user_last_name','user_email','user_mobile'] 
+
+class OrderedFoodSerializer(serializers.ModelSerializer):
+    item_name = serializers.CharField(source="food.Item_name")
+    item_price = serializers.DecimalField(source="food.Price", max_digits=10, decimal_places=2)
+    image = serializers.ImageField(source="food.image")
+
+    class Meta:
+        model = Order
+        fields = ['item_name', 'item_price', 'image']
+
+
+class FoodTrackingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FoodTracking
+        fields = ['status','status_date','order_cancelled_by_user']        
+     
     
