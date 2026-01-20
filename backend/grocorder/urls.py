@@ -31,7 +31,10 @@ urlpatterns = [
     path('all-foods/',all_orders),
     path('order-between-dates/',order_between_dates),
     path('view-order-detail/<str:order_number>/',view_order_detail),
-    path('update-order-status/',update_order_status)
+    path('update-order-status/',update_order_status),
+    path('search-orders/',search_orders),
+    path('category/<int:id>/',category_detail),
+
 
 
 

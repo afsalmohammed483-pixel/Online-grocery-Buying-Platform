@@ -25,6 +25,8 @@ import FoodbeingPrepared from './pages/FoodbeingPrepared';
 import FoodDelivered from './pages/FoodDelivered';
 import OrderReport from './pages/OrderReport';
 import ViewFoodOrder from './pages/ViewFoodOrder';
+import SearchOrder from './pages/SearchOrder';
+import EditCategory from './pages/EditCategory';
 
 
 function App() {
@@ -41,6 +43,7 @@ function App() {
             <Route path="/manage-food" element={<ManageFood/>}></Route>
             <Route path="/order-not-confirmed" element={<OrdersNotConfirmed/>}></Route>
             <Route path="/search" element={<SearchPage/>}></Route>
+            <Route path='/search-order' element={<SearchOrder/>}></Route>
             <Route path="/register" element={<Register/>}></Route>
             <Route path="/login" element={<Login/>}></Route>
             <Route path="/food/:id" element={<FoodDetail/>}></Route>
@@ -58,6 +61,7 @@ function App() {
             <Route path='/orders-delivered' element={<FoodDelivered/>}></Route>
             <Route path='/order-report' element={<OrderReport/>}></Route>
             <Route path="/admin-view-order-detail/:orderNumber" element={<ViewFoodOrder/>}></Route>
+            <Route path="/edit_category/:id" element={<EditCategory/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

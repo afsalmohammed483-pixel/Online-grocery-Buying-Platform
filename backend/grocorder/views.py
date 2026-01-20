@@ -342,4 +342,37 @@ def update_order_status(request):
     except OrderAddress.DoesNotExist:
         return Response({'error': 'Invalid Order Number'},status=400)
     
-     
+@api_view(['GET'])
+def search_orders(request):
+   query = request.GET.get('q','')
+   if query:
+          orders = OrderAddress.objects.filter(order_number__icontains=query).order_by('-order_time')
+   else:  
+       orders = []    
+   serializer = OrderSummarySerializer(orders,many=True)
+   return Response(serializer.data)     
+
+@api_view(['GET','PUT','DELETE'])
+def category_detail(request,id):
+    try:
+       category= Category.objects.get(id=id)
+    except Category.DoesNotExist:
+       return Response({'error':'Category not Found'},status=404)
+    if request.method == 'GET':
+          
+      serializer = CategorySerializer(category)
+      return Response(serializer.data)
+    elif request.method == 'PUT':
+          
+      serializer = CategorySerializer(category,data=request.data)
+      if serializer.is_valid():
+          serializer.save()
+      return Response({'message':'Category Updated Succesfully'},status=200)
+    elif request.method == 'DELETE':
+          
+        category.delete()
+        return Response({'error':'Category Deleted Succesfully'},status=200)
+
+
+
+

@@ -10,7 +10,7 @@ const FoodbeingPrepared = () => {
                  const adminUser = localStorage.getItem('adminId');
                  const navigate = useNavigate();
                     
-                            fetch('http://127.0.0.1:8000/api/foodpickup/')
+                            fetch('http://127.0.0.1:8000/api/food_being-prepared/')
               .then(res => {
                 if (!res.ok) throw new Error("API error");
                 return res.json();
