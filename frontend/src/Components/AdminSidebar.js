@@ -95,7 +95,7 @@ const toggleMenu = (menuName)=>{
                 <FaFile className='icon-fix'/> B/w Dates Report </Link>
             </div>
            <div className='list-group list-group-flush mt-3'>
-                <Link className='list-group-item list-group-item-action bg-dark text-white'>
+                <Link to='/search-order' className='list-group-item list-group-item-action bg-dark text-white'>
                 <FaSearch className='icon-fix'/> Search</Link>
             </div>  </div>
  <div className='list-group list-group-flush mt-3'>

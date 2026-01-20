@@ -80,10 +80,10 @@ const [orders,setOrders] = useState([])
                                 <option value='all'>All</option>
                                 <option value='not_confirmed'>Not Confirmed</option>
                                 <option value='Order Confirmed'>Order Confirmed</option>
-                                <option name='Food being Prepared'>Packing</option>
-                                <option name='Food Pickup'>Item Ready to Pickup</option>
-                                <option name='Food Delivered'>Item Delivered</option>
-                                <option name='Order Cancelled'>Order Cancelled</option>
+                                <option value='Food_being-Prepared'>Packing</option>
+                                <option value='Food Pickup'>Item Ready to Pickup</option>
+                                <option value='Food Delivered'>Item Delivered</option>
+                                <option value='Order Cancelled'>Order Cancelled</option>
                             </select>
                            
                         </div>

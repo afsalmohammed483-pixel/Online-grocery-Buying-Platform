@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import AdminLayout from '../Components/AdminLayout'
-import { Link } from 'react-router-dom'
+import { data, Link } from 'react-router-dom'
+import { ToastContainer ,toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const ManageCategory = () => {
     const [categories, setCategories] = useState([])
@@ -26,6 +28,23 @@ const ManageCategory = () => {
             setCategories(filtered);
         }
 
+    }
+      const handleDelete= (id) => {
+        
+        if (window.confirm("Are you Sure Want to Delete")) {
+            fetch(`http://127.0.0.1:8000/api/category/${id}/`,{
+                method:'DELETE',
+
+            })
+            .then(res=>res.json())
+            .then(data => {
+                 toast.success(data.message);
+                 setCategories(categories.filter(category=>category.id!==id));
+            })
+            .catch(err => console.error(err));
+
+        }
+       
     }
     return (
         <AdminLayout>
@@ -57,10 +76,10 @@ const ManageCategory = () => {
                                 <td>{new Date(category.Creation_date).toLocaleString()} </td>
 
                                 <td>
-                                    <Link className='btn btn-sm btn-primary me-2'>
+                                    <Link to={`/edit_category/${category.id}`} className='btn btn-sm btn-primary me-2'>
                                         <i className='fas fa-edit me-1 '></i> EDIT</Link>
 
-                                    <button className='btn btn-sm btn-danger'>
+                                    <button onClick={() => handleDelete(category.id)} className='btn btn-sm btn-danger'>
                                         <i className='fas fa-trash-alt me-1 '></i>DELETE</button>
                                 </td>
                             </tr>
