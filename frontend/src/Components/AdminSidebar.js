@@ -30,7 +30,7 @@ const toggleMenu = (menuName)=>{
             
 
             <div className='list-group list-group-flush mt-4'>
-                <Link className='list-group-item list-group-item-action bg-dark text-white border-0'>
+                <Link to="/manage_users" className='list-group-item list-group-item-action bg-dark text-white border-0'>
                 <FaUsers className='icon-fix'/> Registered Users</Link>
             </div>
 

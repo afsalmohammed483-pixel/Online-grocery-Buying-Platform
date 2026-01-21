@@ -27,6 +27,8 @@ import OrderReport from './pages/OrderReport';
 import ViewFoodOrder from './pages/ViewFoodOrder';
 import SearchOrder from './pages/SearchOrder';
 import EditCategory from './pages/EditCategory';
+import EditFood from './pages/EditFood';
+import ManageUsers from './pages/ManageUsers';
 
 
 function App() {
@@ -62,6 +64,8 @@ function App() {
             <Route path='/order-report' element={<OrderReport/>}></Route>
             <Route path="/admin-view-order-detail/:orderNumber" element={<ViewFoodOrder/>}></Route>
             <Route path="/edit_category/:id" element={<EditCategory/>}></Route>
+            <Route path="/edit_food/:id" element={<EditFood/>}></Route>
+            <Route path="/manage_users" element={<ManageUsers/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

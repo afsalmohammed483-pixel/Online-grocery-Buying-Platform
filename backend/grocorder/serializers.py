@@ -82,6 +82,6 @@ class FoodTrackingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FoodTracking
-        fields = ['status','status_date','order_cancelled_by_user']        
+        fields = ['status','status_date','order_cancelled_by_user','remark']        
      
     
