@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import AdminLayout from '../Components/AdminLayout'
 import { Link } from 'react-router-dom'
+import { ToastContainer ,toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 
 const ManageFood = () => {
@@ -28,10 +30,36 @@ const ManageFood = () => {
         }
 
     }
+        const handleDelete= (id) => {
+            
+            if (window.confirm("Are you Sure Want to Delete")) {
+                fetch(`http://127.0.0.1:8000/api/delete-food/${id}/`,{
+                    method:'DELETE',
+    
+                })
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    } else {
+                        throw new Error('Failed to delete item');
+                    }
+                })
+                .then(data => {
+                     toast.success(data.message);
+                     setFoods(foods.filter(food=>food.id!==id));
+                })
+                .catch(err => {
+                    console.error(err);
+                    toast.error('Failed to delete item');
+                });
+    
+            }
+        }
     return (
         <div>
 
             <AdminLayout>
+                <ToastContainer position='top-center' autoClose={2000}/>
                 <div>
                     <h3 className='text-center text-primary mb-4'>
                         <i className='fas fa-list-alt me-1'></i>Manage Products
@@ -59,10 +87,10 @@ const ManageFood = () => {
                                     <td>{food.category_name}</td>
                                     <td>{food.Item_name} </td>
                                     <td>
-                                        <Link className='btn btn-sm btn-primary me-2'>
+                                        <Link to={`/edit_food/${food.id}`} className='btn btn-sm btn-primary me-2'>
                                             <i className='fas fa-edit me-1 '></i> EDIT</Link>
 
-                                        <button className='btn btn-sm btn-danger'>
+                                        <button onClick={() => handleDelete(food.id)} className='btn btn-sm btn-danger'>
                                             <i className='fas fa-trash-alt me-1 '></i>DELETE</button>
                                     </td>
                                 </tr>

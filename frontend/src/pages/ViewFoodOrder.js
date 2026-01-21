@@ -10,6 +10,7 @@ const ViewFoodOrder = () => {
     const adminUser = localStorage.getItem('adminUser')
     const navigate = useNavigate();
     const [data, setData] = useState(null);
+    const [updating, setUpdating] = useState(false);
 
 
     useEffect(() => {
@@ -31,7 +32,7 @@ const ViewFoodOrder = () => {
     const { order, foods, tracking } = data;
     const statusOptions = [
         "Order Confirmed",
-        "Food being Prepared",
+        "Food being prepared",
         "Food Pickup",
         "Food Delivered",
         "Order Cancelled"
@@ -89,7 +90,7 @@ const ViewFoodOrder = () => {
 
                     <table className='table table-bordered'>
                         <thead>
-                            <tr><th>#</th><th>Status</th><th>Date</th></tr>
+                            <tr><th>#</th><th>Status</th><th>Remark</th><th>Date</th></tr>
 
                         </thead>
                         <tbody>
@@ -101,7 +102,7 @@ const ViewFoodOrder = () => {
                                     <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td>{track.status}</td>
-
+                                        <td>{track.remark || 'N/A'}</td>
                                         <td>{new Date(track.status_date).toLocaleString()}</td>
                                     </tr>
                                 ))
@@ -116,33 +117,41 @@ const ViewFoodOrder = () => {
                     {order.order_final_status !== "Food Delivered" && (
                         <div className='my-5'>
                             <h5>Update Order Status</h5>
-                             <form onSubmit={(e)=>{
+                            <form onSubmit={(e) => {
                                 e.preventDefault();
-                                const status=e.target.status.value || "";
-                               
-                                fetch('http://127.0.0.1:8000/api/update-order-status/',{
-                            method:'POST',
-                            headers:{ 'Content-Type':'application/json'},
-                            body:JSON.stringify({
-                                order_number: order.order_number,
-                                status,
-                            
-                            }),
-                                 })
-                                 .then(res=>res.json())
-                                 .then((res)=>{
-                                    if(res.message){
-                                        toast.success(res.message);
-                                        setTimeout(()=> window.location.reload(),1000);
-                                    }
-                                    else{
-                                        toast.error(res.error || "Failed to Update Status");
+                                if (updating) return;
+                                setUpdating(true);
+                                const status = e.target.status.value || "";
+                                const remark = e.target.remark.value || "";
 
-                                    }
-                                 })
-                                 .catch(()=>toast.error("Server Error"));
+                                fetch('http://127.0.0.1:8000/api/update-order-status/', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        order_number: order.order_number,
+                                        status,
+                                        remark,
+                                    }),
+                                })
+                                    .then(res => res.json())
+                                    .then((res) => {
+                                        setUpdating(false);
+                                        if (res.message) {
+                                            toast.success(res.message);
+                                            setTimeout(() => window.location.reload(), 1000);
+                                        }
+                                        else {
+                                            toast.error(res.error || "Failed to Update Status");
+
+                                        }
+                                    })
+                                    .catch(() => {
+                                        setUpdating(false);
+                                        toast.error("Server Error");
+                                    });
                             }} >
                                 <div className='mb-3'>
+                                    <label className='form-label'>Select Status</label>
                                     <select name='status' className='form-control' required>
                                         {visibleOptions.map((status, index) => (
                                             <option key={index} value={status}>{status}</option>
@@ -151,19 +160,26 @@ const ViewFoodOrder = () => {
                                     </select>
 
                                 </div>
-                              
-                                   
+
+                                <div className='mb-3'>
+                                    <label className='form-label'>Remark (Optional)</label>
+                                    <textarea name='remark' className='form-control' rows='3' placeholder='Add a remark for this status update...'></textarea>
+                                </div>
+
+
 
                                 <div className='text-center'>
-                                    <button type='submit' className='btn btn-success'>Update Status</button>
+                                    <button type='submit' className='btn btn-success' disabled={updating}>
+                                        {updating ? 'Updating...' : 'Update Status'}
+                                    </button>
 
                                 </div>
 
                             </form>
-            
+
                         </div>
-                        
-             
+
+
 
 
                     )}

@@ -47,13 +47,13 @@ class OrderAddress(models.Model):
         return f"{self.order_number} ({self.user})"  
 
 class FoodTracking(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order_address = models.ForeignKey(OrderAddress, on_delete=models.CASCADE)
     remark = models.CharField(max_length=200,null=True)  
     status = models.CharField(max_length=200,null=True)
     status_date = models.DateTimeField(auto_now_add=True)
     order_cancelled_by_user = models.BooleanField(null=True)
     def __str__(self):
-        return f"{self.order} - {self.status}"       
+        return f"{self.order_address} - {self.status}"       
 
 class PaymentDetails(models.Model):
     PAYMENT_CHOICES = [
